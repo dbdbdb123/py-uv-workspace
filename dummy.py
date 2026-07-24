@@ -1,3 +1,4 @@
+%%writefile app.py
 
 import pandas as pd
 import streamlit as st
@@ -22,7 +23,7 @@ st.markdown(
         [data-testid="stSidebar"] * {
             color: white !important;
         }
-
+        
         div.row-widget.stRadio div[role="radiogroup"] {
             gap: 6px;
         }
@@ -208,8 +209,6 @@ menu = st.sidebar.radio(
 st.sidebar.divider()
 st.sidebar.caption("SKN35_1st_Project_Group5")
 
-# 함수는 메인에 두지말고 빼고 메인은 메인코드만 
-
 def section_title(title, caption):
     st.markdown(
         f"""
@@ -292,12 +291,12 @@ def registration_status_view():
 
     display_reg = filtered_reg.copy()
     display_reg["브랜드 로고"] = display_reg["제조사"].map(logo_url_map)
-
+    
     cols = ["기준연월", "제조사구분", "브랜드 로고", "제조사", "시도", "차종", "연료", "등록대수"]
     display_reg = display_reg[[c for c in cols if c in display_reg.columns]]
 
     st.markdown(f"### 📋 필터링된 등록 현황 목록 (총 {len(display_reg)}건)")
-
+    
     st.dataframe(
         display_reg,
         column_config={
@@ -343,11 +342,11 @@ def brand_ranking_view():
     filtered["브랜드 로고"] = filtered["브랜드"].map(logo_url_map)
 
     st.markdown(f"### 📌 [{selected_month}] {maker_type} 브랜드 등록 랭킹")
-
+    
     display_df = filtered[["순위", "브랜드 로고", "브랜드", "등록대수", "전월대비증가", "증감률(%)"]].rename(
         columns={"전월대비증가": "전월대비 증가량"}
     )
-
+    
     st.dataframe(
         display_df,
         column_config={
@@ -378,7 +377,7 @@ def model_ranking_view():
         selected_month = st.selectbox("기준 연월 선택", available_months, key="model_month")
     with c2:
         maker_type = st.selectbox("제조사 구분 선택", ["국산차", "수입차"], key="model_maker_type")
-
+    
     sub_df = model_ranking_df[
         (model_ranking_df["기준연월"] == selected_month) & 
         (model_ranking_df["제조사구분"] == maker_type)
@@ -386,7 +385,7 @@ def model_ranking_view():
     raw_brands = sorted(sub_df["브랜드"].unique()) if not sub_df.empty else []
 
     st.markdown("#### 🔍 브랜드 선택 (로고 클릭)")
-
+    
     if raw_brands:
         # 세션 상태 초기화
         if "selected_brand" not in st.session_state or st.session_state["selected_brand"] not in raw_brands:
@@ -400,7 +399,7 @@ def model_ranking_view():
                 is_selected = (st.session_state["selected_brand"] == brand)
                 border_color = "#3b82f6" if is_selected else "#e5e7eb"
                 bg_color = "#eff6ff" if is_selected else "#ffffff"
-
+                
                 # 브랜드 선택 카드 HTML 구성
                 card_html = f"""
                 <div style="
@@ -421,7 +420,7 @@ def model_ranking_view():
                 if st.button("선택", key=f"btn_{brand}", use_container_width=True):
                     st.session_state["selected_brand"] = brand
                     st.rerun()
-
+                    
         selected_brand = st.session_state["selected_brand"]
     else:
         selected_brand = None
@@ -468,9 +467,9 @@ def data_erd_view():
     section_title("데이터 및 ERD 구조 안내", "시스템에서 관리하는 핵심 데이터 스키마 및 테이블 간의 관계(ERD)를 설명합니다.")
 
     st.markdown("### 📊 주요 데이터 테이블 구조")
-
+    
     tab1, tab2, tab3 = st.tabs(["1. 차량 등록 테이블", "2. 브랜드 랭킹 테이블", "3. 모델 랭킹 테이블"])
-
+    
     with tab1:
         st.markdown("**`registration_tbl` (지역별/항목별 등록 현황)**")
         st.code("""
@@ -482,7 +481,7 @@ def data_erd_view():
 - 연료 (VARCHAR): 휘발유, 경유, 하이브리드, 전기, LPG
 - 등록대수 (INT): 누적 등록 대수
         """, language="text")
-
+        
     with tab2:
         st.markdown("**`brand_ranking_tbl` (브랜드별 순위 집계)**")
         st.code("""
